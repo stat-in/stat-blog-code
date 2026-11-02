@@ -5,12 +5,15 @@
 # 通常は Makefile（make sim）から呼ぶ。リポジトリのルートで実行すること。
 
 args <- commandArgs(trailingOnly = TRUE)
-if (length(args) < 1) stop("使い方: Rscript simkit/run.R posts/<slug> [--pilot] [--cores N]")
+if(length(args) < 1) stop("使い方: Rscript simkit/run.R posts/<slug> [--pilot] [--cores N]")
 
-flag <- function(name) name %in% args
+flag <- function(name) {
+  return(name %in% args)
+}
 value <- function(name, default) {
   i <- match(name, args)
-  if (is.na(i) || i == length(args)) default else args[[i + 1]]
+  if(is.na(i) || i == length(args)) return(default)
+  return(args[[i + 1]])
 }
 
 file_arg <- grep("^--file=", commandArgs(trailingOnly = FALSE), value = TRUE)

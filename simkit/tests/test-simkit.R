@@ -54,7 +54,7 @@ test_that("途中保存のブロックに分けて回しても結果は同じ", 
 test_that("analyse() のエラーは記録され、他の反復は続く", {
   bad <- list(
     generate = function(cond) rnorm(1),
-    analyse = function(dat, cond) if (dat > 0) stop("正の値") else c(m = dat)
+    analyse = function(dat, cond) if(dat > 0) stop("正の値") else c(m = dat)
   )
   out <- run_condition(list(n = 1), 1, 7, 1:30, bad, cores = 1)
   expect_equal(nrow(out$results) + nrow(out$errors), 30)
