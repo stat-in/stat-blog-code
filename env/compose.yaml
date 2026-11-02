@@ -1,0 +1,12 @@
+# 使い方はリポジトリ直下の Makefile（make docker-build / make docker-sim）を参照。
+services:
+  sim:
+    build:
+      context: ..
+      dockerfile: env/Dockerfile
+    image: stat-blog-sim:latest
+    volumes:
+      - ..:/work
+    working_dir: /work
+    # 結果ファイルがホスト側で root 所有にならないよう、ホストの UID/GID で動かす
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"

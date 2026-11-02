@@ -1,0 +1,5 @@
+# シミュレーションで使う R パッケージ（1行に1つ）。
+# 版は env/Dockerfile の CRAN_SNAPSHOT の日付で固定される。足したら make docker-build で作り直す。
+yaml
+jsonlite
+testthat
