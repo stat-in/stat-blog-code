@@ -12,12 +12,13 @@ RSCRIPT ?= Rscript
 RUN_FLAGS = $(if $(PILOT),--pilot) $(if $(FRESH),--fresh) $(if $(ALLOW_DIRTY),--allow-dirty)
 DOCKER_RUN = HOST_UID=$$(id -u) HOST_GID=$$(id -g) docker compose -f env/compose.yaml run --rm sim
 
-.PHONY: help check-slug new-post sim test push-results site-dev site-build \
+.PHONY: help check-slug new-post new-basics sim test push-results site-dev site-build \
         docker-build docker-sim docker-test docker-shell
 
 help:
 	@echo "記事とシミュレーション"
-	@echo "  make new-post SLUG=<slug>                 雛形から新しいテーマを作る"
+	@echo "  make new-post SLUG=<slug>                 雛形から新しいテーマ（シミュレーション記事）を作る"
+	@echo "  make new-basics SLUG=<slug>               雛形から入門解説の記事を作る（article.mdx だけ）"
 	@echo "  make sim SLUG=<slug> [PILOT=1] [CORES=n]  実行（PILOT=1 で少ない反復の試運転）"
 	@echo "  make test [SLUG=<slug>]                   simkit と各テーマのテスト"
 	@echo "  make push-results SLUG=<slug>             outputs/ をコミットして push"
@@ -45,6 +46,13 @@ new-post:
 	cp posts/_template/{PLAN.md,config.yaml,model.R,test-model.R,article.mdx} $(POST)/
 	sed -i.bak 's/__SLUG__/$(SLUG)/' $(POST)/config.yaml && rm $(POST)/config.yaml.bak
 	@echo "$(POST) を作りました。PLAN.md から書き始めてください。"
+
+new-basics:
+	@test -n "$(SLUG)" || { echo "SLUG=<slug> を指定してください"; exit 1; }
+	@test ! -e "$(POST)" || { echo "$(POST) はすでにあります"; exit 1; }
+	mkdir -p $(POST)
+	cp posts/_template-basics/article.mdx $(POST)/
+	@echo "$(POST)/article.mdx を作りました（入門解説）。"
 
 sim: check-slug
 	$(RSCRIPT) simkit/run.R $(POST) --cores $(CORES) $(RUN_FLAGS)
